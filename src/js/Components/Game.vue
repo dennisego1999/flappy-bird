@@ -14,11 +14,17 @@ function initGame() {
 onMounted(() => {
 	// Init game
 	initGame();
+
+	// Add event listener
+	window.addEventListener('resize', () => game.resize());
 });
 
 onBeforeUnmount(() => {
 	// Destroy game
 	game.destroy();
+
+	// Remove event listener
+	window.removeEventListener('resize', () => game.resize());
 });
 </script>
 
