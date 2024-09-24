@@ -6,7 +6,8 @@ export default defineConfig({
 	plugins: [vue()],
 	resolve: {
 		alias: {
-			'@': '/src/js'
+			'@js': '/src/js',
+			'@styles': '/src/styles'
 		}
 	}
 });
