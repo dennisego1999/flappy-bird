@@ -22,7 +22,7 @@ export default class Pillar {
 		this.sprite.width = 80;
 
 		// Set initial x position
-		this.sprite.x = window.innerWidth;
+		this.sprite.x = window.innerWidth + this.sprite.width;
 
 		// Set anchor to center
 		this.sprite.anchor.set(0.5, 0);
@@ -41,10 +41,15 @@ export default class Pillar {
 		}
 
 		// Set speed factor
-		const speedFactor = 0.5;
+		const speedFactor = 1;
 
 		// Update position
 		this.sprite.position.x -= speedFactor;
+
+		if (this.sprite.position.x <= -this.sprite.width) {
+			// Teleport back
+			this.sprite.position.x = window.innerWidth + this.sprite.width;
+		}
 
 		if (this.direction === 'down') {
 			// The 'up' sprite is positioned at the top of the canvas, offset by its height
