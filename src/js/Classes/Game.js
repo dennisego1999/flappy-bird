@@ -7,6 +7,7 @@ export default class Game extends PixiManager {
 
 		// Set variables
 		this.background = null;
+		this.base = null;
 
 		// Create pixi app
 		this.createPixiApp().then(() => {
@@ -32,18 +33,28 @@ export default class Game extends PixiManager {
 		// Add background sprite
 		const backgroundTexture = await Assets.load('/assets/sprites/background-day.webp');
 		this.background = Sprite.from(backgroundTexture);
+		this.background.zIndex = 0;
 
-		// Update background dimensions
-		this.updateBackgroundDimensions();
+		// Add background sprite
+		const baseTexture = await Assets.load('/assets/sprites/base.webp');
+		this.base = Sprite.from(baseTexture);
+		this.base.zIndex = 1;
 
-		// Add the stage container
+		// Update ui dimensions
+		this.updateUiDimensions();
+
+		// Add to stage container
 		this.app.stage.addChild(this.background);
+		this.app.stage.addChild(this.base);
 	}
 
-	updateBackgroundDimensions() {
+	updateUiDimensions() {
+		// Get aspect ratios
 		const backgroundAspectRatio = 288 / 512;
+		const baseAspectRatio = 336 / 112;
 		const canvasAspectRatio = this.canvasDimensions.width / this.canvasDimensions.height;
 
+		// Adjust the background size and position
 		if (canvasAspectRatio >= backgroundAspectRatio) {
 			// Fit to window width
 			this.background.width = this.canvasDimensions.width;
@@ -54,9 +65,17 @@ export default class Game extends PixiManager {
 			this.background.width = this.canvasDimensions.height * backgroundAspectRatio;
 		}
 
-		// Center background in case of leftover space
+		// Center the background
 		this.background.x = (this.canvasDimensions.width - this.background.width) / 2;
 		this.background.y = (this.canvasDimensions.height - this.background.height) / 2;
+
+		// Adjust the base size and position
+		this.base.width = this.canvasDimensions.width;
+		this.base.height = this.canvasDimensions.width / baseAspectRatio;
+
+		// Position the base at the bottom of the canvas
+		this.base.x = 0;
+		this.base.y = this.canvasDimensions.height - this.base.height;
 	}
 
 	resize() {
@@ -67,6 +86,6 @@ export default class Game extends PixiManager {
 		this.app.resize();
 
 		// Update background size
-		this.updateBackgroundDimensions();
+		this.updateUiDimensions();
 	}
 }
