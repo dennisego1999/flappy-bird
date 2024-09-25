@@ -4,7 +4,6 @@ export default class Game {
 	constructor(canvasId) {
 		this.canvasId = canvasId;
 		this.canvas = null;
-		this.canvasDimensions = null;
 		this.app = null;
 		this.ticker = PIXI.Ticker.shared;
 		this.animateFrameId = null;
@@ -18,16 +17,13 @@ export default class Game {
 		// Set the canvas
 		this.canvas = document.getElementById(this.canvasId);
 
-		// Set canvas dimensions
-		this.canvasDimensions = this.canvas.getBoundingClientRect();
-
 		// Create pixi app
 		this.app = new PIXI.Application();
 
 		// Init the application
 		await this.app.init({
-			width: this.canvasDimensions.width,
-			height: this.canvasDimensions.height,
+			width: window.innerWidth,
+			height: window.innerHeight,
 			canvas: this.canvas
 		});
 
