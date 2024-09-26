@@ -1,6 +1,7 @@
 import { Assets, Sprite } from 'pixi.js';
 import PillarPair from '@js/Classes/PillarPair.js';
 import PixiManager from '@js/Classes/PixiManager.js';
+import Bird from '@js/Classes/Bird.js';
 
 class Game extends PixiManager {
 	constructor() {
@@ -14,6 +15,7 @@ class Game extends PixiManager {
 		this.pillarTexture = null;
 		this.initialIntervalTimeout = 3000;
 		this.pillarGenerationInterval = null;
+		this.bird = null;
 	}
 
 	init(canvasId) {
@@ -59,6 +61,9 @@ class Game extends PixiManager {
 		// Setup base
 		await this.setupBase();
 
+		// Setup bird
+		await this.setupBird();
+
 		// Update ui dimensions
 		this.updateUiDimensions();
 
@@ -91,6 +96,11 @@ class Game extends PixiManager {
 
 		// Add to stage container
 		this.app.stage.addChild(this.base);
+	}
+
+	setupBird() {
+		// Create a bird
+		this.bird = new Bird();
 	}
 
 	setupPillars() {
