@@ -1,30 +1,22 @@
 <script setup>
-import Game from '@js/Classes/Game.js';
 import { onBeforeUnmount, onMounted } from 'vue';
-
-// Set variables
-let game;
-
-// Define functions
-function initGame() {
-	game = new Game('game-canvas');
-}
+import Game from '@js/Classes/Game.js';
 
 // Life cycles
 onMounted(() => {
 	// Init game
-	initGame();
+	Game.init('game-canvas');
 
 	// Add event listener
-	window.addEventListener('resize', () => game.resize());
+	window.addEventListener('resize', () => Game.resize());
 });
 
 onBeforeUnmount(() => {
 	// Destroy game
-	game.destroy();
+	Game.destroy();
 
 	// Remove event listener
-	window.removeEventListener('resize', () => game.resize());
+	window.removeEventListener('resize', () => Game.resize());
 });
 </script>
 

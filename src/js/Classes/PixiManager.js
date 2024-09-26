@@ -1,8 +1,7 @@
 import * as PIXI from 'pixi.js';
 
 export default class Game {
-	constructor(canvasId) {
-		this.canvasId = canvasId;
+	constructor() {
 		this.canvas = null;
 		this.app = null;
 		this.ticker = PIXI.Ticker.shared;
@@ -13,9 +12,9 @@ export default class Game {
 		this.renderAction = null;
 	}
 
-	async createPixiApp() {
+	async createPixiApp(canvasId) {
 		// Set the canvas
-		this.canvas = document.getElementById(this.canvasId);
+		this.canvas = document.getElementById(canvasId);
 
 		// Create pixi app
 		this.app = new PIXI.Application();

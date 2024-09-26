@@ -1,19 +1,24 @@
 import { Assets, Sprite } from 'pixi.js';
+import PillarPair from '@js/Classes/PillarPair.js';
 import PixiManager from '@js/Classes/PixiManager.js';
-import Pillar from './Pillar.js';
 
-export default class Game extends PixiManager {
-	constructor(canvasId) {
-		super(canvasId);
+class Game extends PixiManager {
+	constructor() {
+		super();
 
 		// Set variables
 		this.background = null;
 		this.base = null;
-		this.pillars = [];
+		this.pillarPairs = [];
 		this.oldCanvasWidth = window.innerWidth;
+		this.pillarTexture = null;
+		this.initialIntervalTimeout = 3000;
+		this.pillarGenerationInterval = null;
+	}
 
+	init(canvasId) {
 		// Create pixi app
-		this.createPixiApp().then(() => {
+		this.createPixiApp(canvasId).then(() => {
 			// Setup scene
 			this.setupScene().then(() => {
 				// Do a resize
@@ -22,9 +27,18 @@ export default class Game extends PixiManager {
 				// Setup render
 				this.setupRender({
 					action: () => {
-						if (this.pillars.length !== 0) {
+						if (this.pillarPairs.length !== 0) {
 							// Update pillars
-							this.pillars.forEach((pillar) => pillar.update());
+							this.pillarPairs.forEach((pillarPair, index) => {
+								// Update pillar pair
+								pillarPair.update();
+
+								// Remove pillar pairs if they are destroyed (off-screen)
+								if (!pillarPair.up.sprite || !pillarPair.down.sprite) {
+									// Clean up destroyed pillar pairs
+									this.pillarPairs.splice(index, 1);
+								}
+							});
 						}
 					}
 				});
@@ -36,6 +50,9 @@ export default class Game extends PixiManager {
 	}
 
 	async setupScene() {
+		// Setup sprite texture
+		await this.setupPillarTexture();
+
 		// Setup background
 		await this.setupBackground();
 
@@ -47,6 +64,11 @@ export default class Game extends PixiManager {
 
 		// Setup pillars
 		await this.setupPillars();
+	}
+
+	async setupPillarTexture() {
+		// Add sprite sprite
+		this.pillarTexture = await Assets.load('/assets/sprites/pipe-green.webp');
 	}
 
 	async setupBackground() {
@@ -72,12 +94,11 @@ export default class Game extends PixiManager {
 	}
 
 	setupPillars() {
-		// Create a pillar pair, one down one up
-		const pillarUp = new Pillar(this.app.stage, 'up');
-		const pillarDown = new Pillar(this.app.stage, 'down');
-
-		// Push to pillars list
-		this.pillars.push(pillarUp, pillarDown);
+		// Generate pillar pairs
+		this.pillarGenerationInterval = setInterval(() => {
+			const newPillarPair = new PillarPair();
+			this.pillarPairs.push(newPillarPair);
+		}, this.initialIntervalTimeout);
 	}
 
 	updateUiDimensions() {
@@ -124,17 +145,24 @@ export default class Game extends PixiManager {
 		this.updateUiDimensions();
 
 		// Update the pillars' x positions based on the width ratio
-		this.pillars.forEach((pillar) => {
-			if (!pillar.sprite) {
+		this.pillarPairs.forEach((pillarPair) => {
+			if (!pillarPair.up.sprite || !pillarPair.down.sprite) {
 				// Early return
 				return;
 			}
 
 			// Scale x position by the width ratio
-			pillar.sprite.position.x *= widthRatio;
+			pillarPair.up.sprite.position.x *= widthRatio;
+			pillarPair.down.sprite.position.x *= widthRatio;
 		});
 
 		// Update the old canvas width for future resizes
 		this.oldCanvasWidth = newCanvasWidth;
 	}
+
+	destroy() {
+		// Destroy the game
+	}
 }
+
+export default new Game();

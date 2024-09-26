@@ -1,9 +1,9 @@
-import { Assets, Sprite } from 'pixi.js';
+import { Sprite } from 'pixi.js';
+import Game from '@js/Classes/Game.js';
 
 export default class Pillar {
-	constructor(container, direction = 'down') {
+	constructor(direction = 'down') {
 		// Set variables
-		this.container = container;
 		this.sprite = null;
 		this.direction = direction;
 
@@ -12,9 +12,8 @@ export default class Pillar {
 	}
 
 	async setupPillar() {
-		// Add sprite sprite
-		const spriteTexture = await Assets.load('/assets/sprites/pipe-green.webp');
-		this.sprite = Sprite.from(spriteTexture);
+		// Create sprite
+		this.sprite = Sprite.from(Game.pillarTexture);
 		this.sprite.zIndex = 10;
 		this.sprite.name = 'sprite';
 
@@ -31,7 +30,7 @@ export default class Pillar {
 		this.sprite.rotation = this.direction === 'down' ? Math.PI : 0;
 
 		// Add to container
-		this.container.addChild(this.sprite);
+		Game.app.stage.addChild(this.sprite);
 	}
 
 	update() {
@@ -47,8 +46,12 @@ export default class Pillar {
 		this.sprite.position.x -= speedFactor;
 
 		if (this.sprite.position.x <= -this.sprite.width) {
-			// Teleport back
-			this.sprite.position.x = window.innerWidth + this.sprite.width;
+			// Pillar has exceeded viewport boundary => destroy the sprite
+			Game.app.stage.removeChild(this.sprite);
+			this.sprite.destroy();
+			this.sprite = null;
+
+			return;
 		}
 
 		if (this.direction === 'down') {
@@ -59,10 +62,15 @@ export default class Pillar {
 		}
 
 		// Set offset height
-		const base = this.container.children.find((child) => child.name === 'base-asset');
+		const base = Game.app.stage.children.find((child) => child.name === 'base-asset');
 		const offsetHeight = base.height;
 
 		// The 'down' sprite is positioned just above the base
 		this.sprite.position.y = window.innerHeight - this.sprite.height - offsetHeight;
+	}
+
+	destroy() {
+		// Destroy the pillar's sprite
+		this.sprite.destroy();
 	}
 }
