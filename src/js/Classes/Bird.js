@@ -7,6 +7,7 @@ export default class Bird {
 		this.velocity = 0; // Bird's vertical velocity
 		this.gravity = 0.6; // Gravity force applied each frame
 		this.flapPower = -8; // Power applied when the bird flaps (negative because it moves upward)
+		this.isHit = false;
 
 		// Init
 		this.init();
@@ -43,8 +44,15 @@ export default class Bird {
 	}
 
 	flap() {
-		// Apply flap power to the velocity
-		this.velocity = this.flapPower;
+		if (!this.isHit) {
+			// Apply flap power to the velocity
+			this.velocity = this.flapPower;
+		}
+	}
+
+	handleCollision() {
+		// Mark the bird as hit
+		this.isHit = true;
 	}
 
 	update() {
@@ -52,13 +60,17 @@ export default class Bird {
 			return;
 		}
 
-		// Apply gravity to velocity
-		this.velocity += this.gravity;
+		if (!this.isHit) {
+			// Normal update logic when bird hasn't hit anything
+			this.velocity += this.gravity;
+			this.sprite.position.y += this.velocity;
+		} else {
+			// After a hit, make the bird fall to the ground
+			this.velocity += this.gravity * 1.5;
+			this.sprite.position.y += this.velocity;
+		}
 
-		// Update the bird's vertical position
-		this.sprite.position.y += this.velocity;
-
-		// Prevent the bird from moving off the screen (top and bottom bounds)
+		// Prevent the bird from moving off the screen (top bound)
 		if (this.sprite.position.y < 0) {
 			/*
 				Highest point met => OK
@@ -71,6 +83,7 @@ export default class Bird {
 			this.velocity = 0;
 		}
 
+		// If the bird hits the ground, stop movement
 		if (this.sprite.position.y > window.innerHeight - this.sprite.height - Game.base.height) {
 			/*
 				Lowest point met => DEAD

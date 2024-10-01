@@ -14,7 +14,7 @@ class Game extends PixiManager {
 		this.pillarPairs = [];
 		this.oldCanvasWidth = window.innerWidth;
 		this.pillarTexture = null;
-		this.pillarSpawnDistance = 300; // Distance from the right edge to spawn new pillars
+		this.pillarSpawnDistance = 300;
 		this.bird = null;
 		this.birdControls = null;
 	}
@@ -30,30 +30,8 @@ class Game extends PixiManager {
 				// Setup render
 				this.setupRender({
 					action: () => {
-						if (this.pillarPairs.length !== 0) {
-							// Update pillars
-							this.pillarPairs.forEach((pillarPair, index) => {
-								// Update pillar pair
-								pillarPair.update();
-
-								// Remove pillar pairs if they are destroyed (off-screen)
-								if (!pillarPair.up.sprite || !pillarPair.down.sprite) {
-									// Clean up destroyed pillar pairs
-									this.pillarPairs.splice(index, 1);
-								}
-							});
-
-							// Check if it's time to spawn a new pillar pair
-							this.checkAndSpawnNewPillar();
-						} else {
-							// If there are no pillars, spawn the first one
-							this.spawnPillarPair();
-						}
-
-						// Update bird
-						if (this.bird) {
-							this.bird.update();
-						}
+						this.updatePillars();
+						this.updateBird();
 					}
 				});
 
@@ -114,6 +92,64 @@ class Game extends PixiManager {
 		// Create bird controls and connect them
 		this.birdControls = new BirdControls();
 		this.birdControls.connect();
+	}
+
+	updateBird() {
+		if (this.bird) {
+			// Update the bird's position and state
+			this.bird.update();
+
+			// Check for collisions with pillars
+			this.checkCollisions();
+		}
+	}
+
+	updatePillars() {
+		if (this.pillarPairs.length !== 0) {
+			// Update pillars
+			this.pillarPairs.forEach((pillarPair, index) => {
+				// Update pillar pair
+				pillarPair.update();
+
+				// Remove pillar pairs if they are destroyed (off-screen)
+				if (!pillarPair.up.sprite || !pillarPair.down.sprite) {
+					// Clean up destroyed pillar pairs
+					this.pillarPairs.splice(index, 1);
+				}
+			});
+
+			// Check if it's time to spawn a new pillar pair
+			this.checkAndSpawnNewPillar();
+		} else {
+			// If there are no pillars, spawn the first one
+			this.spawnPillarPair();
+		}
+	}
+
+	checkCollisions() {
+		this.pillarPairs.forEach((pillarPair) => {
+			if (!this.bird.sprite) {
+				return;
+			}
+
+			const birdBounds = this.bird.sprite.getBounds();
+			const upPillarBounds = pillarPair.up.sprite.getBounds();
+			const downPillarBounds = pillarPair.down.sprite.getBounds();
+
+			// Check if bird collides with either the upper or lower pillar
+			if (this.isColliding(birdBounds, upPillarBounds) || this.isColliding(birdBounds, downPillarBounds)) {
+				this.bird.handleCollision();
+			}
+		});
+	}
+
+	isColliding(rect1, rect2) {
+		return (
+			rect1.x < rect2.x + rect2.width &&
+			rect1.x + rect1.width > rect2.x &&
+			rect1.y < rect2.y + rect2.height &&
+			rect1.y + rect1.height > rect2.y
+		);
 	}
 
 	spawnPillarPair() {
