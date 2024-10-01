@@ -18,7 +18,7 @@ class Game extends PixiManager {
 		this.pillarTexture = null;
 		this.pillarSpawnDistance = null;
 		this.pillarBaseDistance = 300;
-		this.baseSpeed = 1;
+		this.baseSpeed = 2;
 		this.gameSpeed = null;
 		this.difficultyMultiplier = 1;
 		this.bird = null;
@@ -186,14 +186,11 @@ class Game extends PixiManager {
 
 					// Mark the pillar pair as passed
 					pillarPair.hasPassed = true;
-
-					// Adjust difficulty dynamically after each pass
-					this.adjustDifficulty();
 				}
 			}
 		});
 
-		// Dynamically adjust pillar spawn distance and speed
+		// Adjust difficulty
 		this.adjustDifficulty();
 
 		// Spawn a new pillar if the distance is sufficient from the last pillar pair
