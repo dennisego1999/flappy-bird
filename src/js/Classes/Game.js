@@ -36,6 +36,9 @@ class Game extends PixiManager {
 				// Setup render
 				this.setupRender({
 					action: () => {
+						// Update bird
+						this.updateBird();
+
 						if (this.isGameOver.value) {
 							// Game over
 							return;
@@ -43,9 +46,6 @@ class Game extends PixiManager {
 
 						// Update pillars
 						this.updatePillars();
-
-						// Update bird
-						this.updateBird();
 					}
 				});
 

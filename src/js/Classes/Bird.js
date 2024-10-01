@@ -1,5 +1,6 @@
 import { AnimatedSprite, Assets } from 'pixi.js';
 import Game from '@js/Classes/Game.js';
+import { lerp } from '../Helpers/index.js';
 
 export default class Bird {
 	constructor() {
@@ -7,6 +8,8 @@ export default class Bird {
 		this.velocity = 0; // Bird's vertical velocity
 		this.gravity = 0.6; // Gravity force applied each frame
 		this.flapPower = -8; // Power applied when the bird flaps (negative because it moves upward)
+		this.currentRotation = null;
+		this.targetRotation = null;
 
 		// Init
 		this.init();
@@ -63,10 +66,16 @@ export default class Bird {
 			// Normal update logic when bird hasn't hit anything
 			this.velocity += this.gravity;
 			this.sprite.position.y += this.velocity;
+
+			// Set target rotation
+			this.targetRotation = Math.min(Math.max(this.velocity * 0.1, -Math.PI / 4), Math.PI / 4);
 		} else {
 			// After a hit, make the bird fall to the ground
 			this.velocity += this.gravity * 1.5;
 			this.sprite.position.y += this.velocity;
+
+			// Set target rotation
+			this.targetRotation = Math.min(Math.max(this.velocity * 0.1, -Math.PI / 4), Math.PI / 4);
 		}
 
 		// Prevent the bird from moving off the screen (top bound)
@@ -80,6 +89,9 @@ export default class Bird {
 
 			// Reset velocity if hitting the top
 			this.velocity = 0;
+
+			// Set target rotation
+			this.targetRotation = Math.PI / 2;
 		}
 
 		// If the bird hits the ground, stop movement
@@ -97,6 +109,15 @@ export default class Bird {
 			if (!Game.isGameOver.value) {
 				Game.isGameOver.value = true;
 			}
+
+			// Set target rotation
+			this.targetRotation = Math.PI / 4;
 		}
+
+		// Lerp rotation y
+		this.currentRotation = lerp(this.currentRotation, this.targetRotation, 0.1);
+
+		// Set bird rotation
+		this.sprite.rotation = this.currentRotation;
 	}
 }
