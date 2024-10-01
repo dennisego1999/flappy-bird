@@ -16,6 +16,8 @@ class Game extends PixiManager {
 		this.oldCanvasWidth = window.innerWidth;
 		this.pillarTexture = null;
 		this.pillarSpawnDistance = 300;
+		this.gameSpeed = 1;
+		this.difficultyMultiplier = 1;
 		this.bird = null;
 		this.birdControls = null;
 		this.score = ref(0);
@@ -122,22 +124,32 @@ class Game extends PixiManager {
 		if (this.pillarPairs.length !== 0) {
 			// Update pillars
 			this.pillarPairs.forEach((pillarPair, index) => {
-				// Update pillar pair
-				pillarPair.update();
+				// Increase pillar movement speed based on difficulty
+				const pillarSpeed = this.gameSpeed * this.difficultyMultiplier;
+				pillarPair.update(pillarSpeed);
 
-				// Remove pillar pairs if they are destroyed (off-screen)
+				console.log(pillarSpeed);
+
+				// Remove off-screen pillars
 				if (!pillarPair.up.sprite || !pillarPair.down.sprite) {
 					// Clean up destroyed pillar pairs
 					this.pillarPairs.splice(index, 1);
 				}
 			});
 
-			// Check if it's time to spawn a new pillar pair
+			// Dynamically adjust pillar spawn distance and speed
+			this.adjustDifficulty();
+
 			this.checkAndSpawnNewPillar();
 		} else {
 			// If there are no pillars, spawn the first one
 			this.spawnPillarPair();
 		}
+	}
+
+	adjustDifficulty() {
+		// Increase the difficulty multiplier as the score increases
+		this.difficultyMultiplier = 1 + (this.score.value / 10) * 0.5;
 	}
 
 	checkCollisions() {
@@ -177,6 +189,10 @@ class Game extends PixiManager {
 	}
 
 	checkAndSpawnNewPillar() {
+		if (!this.bird.sprite) {
+			return;
+		}
+
 		// Get the last pillar pair
 		const lastPillarPair = this.pillarPairs[this.pillarPairs.length - 1];
 
@@ -194,7 +210,10 @@ class Game extends PixiManager {
 				lastPillarPair.hasPassed = true;
 			}
 
-			// Spawn a new pillar if the distance from the last pillar is sufficient
+			// Adjust difficulty dynamically after each pass
+			this.adjustDifficulty();
+
+			// Spawn a new pillar if the distance is sufficient
 			const distanceFromEnd = window.innerWidth - lastPillarPair.up.sprite.x;
 			if (distanceFromEnd >= this.pillarSpawnDistance) {
 				this.spawnPillarPair();

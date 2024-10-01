@@ -36,14 +36,11 @@ export default class Pillar {
 		Game.app.stage.addChild(this.sprite);
 	}
 
-	update() {
+	update(speedFactor) {
 		if (!this.sprite) {
 			// Early return
 			return;
 		}
-
-		// Set speed factor
-		const speedFactor = 1;
 
 		// Update position
 		this.sprite.position.x -= speedFactor;

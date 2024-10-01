@@ -25,9 +25,12 @@ onBeforeUnmount(() => {
 		<Transition name="fade" mode="out-in">
 			<div
 				v-if="Game.isGameOver.value"
-				class="absolute inset-0 z-10 flex h-full w-full items-center justify-center bg-black/[0.5]"
+				class="absolute inset-0 z-10 flex h-full w-full flex-col items-center justify-center gap-4 bg-black/[0.5]"
 			>
 				<span class="rounded-lg bg-white p-2 font-extrabold">Game over</span>
+				<span class="rounded-lg bg-gray-400 p-2 font-extrabold text-white">
+					Je had een score van {{ Game.score.value }}
+				</span>
 			</div>
 
 			<div v-else class="absolute right-2 top-2 z-50 rounded-lg bg-white p-2">
