@@ -267,7 +267,8 @@ class Game extends PixiManager {
 			this.birdControls.disconnect();
 		}
 
-		// Destroy the game
+		// Destroy the game and all it's children
+		this.app.destroy({}, { children: true });
 	}
 }
 
