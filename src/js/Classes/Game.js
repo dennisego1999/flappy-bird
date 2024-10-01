@@ -2,6 +2,7 @@ import { Assets, Sprite } from 'pixi.js';
 import PillarPair from '@js/Classes/PillarPair.js';
 import PixiManager from '@js/Classes/PixiManager.js';
 import Bird from '@js/Classes/Bird.js';
+import BirdControls from './BirdControls.js';
 
 class Game extends PixiManager {
 	constructor() {
@@ -13,9 +14,9 @@ class Game extends PixiManager {
 		this.pillarPairs = [];
 		this.oldCanvasWidth = window.innerWidth;
 		this.pillarTexture = null;
-		this.initialIntervalTimeout = 3000;
-		this.pillarGenerationInterval = null;
+		this.pillarSpawnDistance = 300; // Distance from the right edge to spawn new pillars
 		this.bird = null;
+		this.birdControls = null;
 	}
 
 	init(canvasId) {
@@ -41,6 +42,17 @@ class Game extends PixiManager {
 									this.pillarPairs.splice(index, 1);
 								}
 							});
+
+							// Check if it's time to spawn a new pillar pair
+							this.checkAndSpawnNewPillar();
+						} else {
+							// If there are no pillars, spawn the first one
+							this.spawnPillarPair();
+						}
+
+						// Update bird
+						if (this.bird) {
+							this.bird.update();
 						}
 					}
 				});
@@ -66,13 +78,10 @@ class Game extends PixiManager {
 
 		// Update ui dimensions
 		this.updateUiDimensions();
-
-		// Setup pillars
-		await this.setupPillars();
 	}
 
 	async setupPillarTexture() {
-		// Add sprite sprite
+		// Add sprite texture
 		this.pillarTexture = await Assets.load('/assets/sprites/pipe-green.webp');
 	}
 
@@ -88,7 +97,7 @@ class Game extends PixiManager {
 	}
 
 	async setupBase() {
-		// Add background sprite
+		// Add base sprite
 		const baseTexture = await Assets.load('/assets/sprites/base.webp');
 		this.base = Sprite.from(baseTexture);
 		this.base.zIndex = 50;
@@ -101,14 +110,35 @@ class Game extends PixiManager {
 	setupBird() {
 		// Create a bird
 		this.bird = new Bird();
+
+		// Create bird controls and connect them
+		this.birdControls = new BirdControls();
+		this.birdControls.connect();
 	}
 
-	setupPillars() {
-		// Generate pillar pairs
-		this.pillarGenerationInterval = setInterval(() => {
-			const newPillarPair = new PillarPair();
-			this.pillarPairs.push(newPillarPair);
-		}, this.initialIntervalTimeout);
+	spawnPillarPair() {
+		// Create a new pillar pair and add it to the list
+		const newPillarPair = new PillarPair();
+		this.pillarPairs.push(newPillarPair);
+
+		// Add the pillar pair to the stage
+		this.app.stage.addChild(newPillarPair.up.sprite);
+		this.app.stage.addChild(newPillarPair.down.sprite);
+	}
+
+	checkAndSpawnNewPillar() {
+		// Get the last pillar pair
+		const lastPillarPair = this.pillarPairs[this.pillarPairs.length - 1];
+
+		if (lastPillarPair && lastPillarPair.up.sprite) {
+			// Calculate the distance between the last pillar and the right edge of the screen
+			const distanceFromEnd = window.innerWidth - lastPillarPair.up.sprite.x;
+
+			// If the distance is less than the spawn threshold, spawn a new pillar
+			if (distanceFromEnd >= this.pillarSpawnDistance) {
+				this.spawnPillarPair();
+			}
+		}
 	}
 
 	updateUiDimensions() {
@@ -171,6 +201,11 @@ class Game extends PixiManager {
 	}
 
 	destroy() {
+		// Clean up the bird controls
+		if (this.birdControls) {
+			this.birdControls.disconnect();
+		}
+
 		// Destroy the game
 	}
 }

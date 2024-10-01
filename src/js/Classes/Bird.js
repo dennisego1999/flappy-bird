@@ -4,6 +4,9 @@ import Game from '@js/Classes/Game.js';
 export default class Bird {
 	constructor() {
 		this.sprite = null;
+		this.velocity = 0; // Bird's vertical velocity
+		this.gravity = 0.6; // Gravity force applied each frame
+		this.flapPower = -8; // Power applied when the bird flaps (negative because it moves upward)
 
 		// Init
 		this.init();
@@ -39,5 +42,45 @@ export default class Bird {
 		Game.app.stage.addChild(this.sprite);
 	}
 
-	update() {}
+	flap() {
+		// Apply flap power to the velocity
+		this.velocity = this.flapPower;
+	}
+
+	update() {
+		if (!this.sprite) {
+			return;
+		}
+
+		// Apply gravity to velocity
+		this.velocity += this.gravity;
+
+		// Update the bird's vertical position
+		this.sprite.position.y += this.velocity;
+
+		// Prevent the bird from moving off the screen (top and bottom bounds)
+		if (this.sprite.position.y < 0) {
+			/*
+				Highest point met => OK
+			 */
+
+			// Set max position
+			this.sprite.position.y = 0;
+
+			// Reset velocity if hitting the top
+			this.velocity = 0;
+		}
+
+		if (this.sprite.position.y > window.innerHeight - this.sprite.height - Game.base.height) {
+			/*
+				Lowest point met => DEAD
+			 */
+
+			// Set min position
+			this.sprite.position.y = window.innerHeight - this.sprite.height - Game.base.height;
+
+			// Reset velocity if hitting the ground
+			this.velocity = 0;
+		}
+	}
 }
