@@ -18,6 +18,7 @@ class Game extends PixiManager {
 		this.pillarSpawnDistance = 300;
 		this.bird = null;
 		this.birdControls = null;
+		this.score = ref(0);
 		this.isGameOver = ref(false);
 	}
 
@@ -179,11 +180,22 @@ class Game extends PixiManager {
 		// Get the last pillar pair
 		const lastPillarPair = this.pillarPairs[this.pillarPairs.length - 1];
 
-		if (lastPillarPair && lastPillarPair.up.sprite) {
-			// Calculate the distance between the last pillar and the right edge of the screen
-			const distanceFromEnd = window.innerWidth - lastPillarPair.up.sprite.x;
+		if (lastPillarPair && lastPillarPair.up.sprite && !lastPillarPair.hasPassed) {
+			// Calculate the distance between the bird and the pillar pair
+			const birdX = this.bird.sprite.position.x;
+			const pillarX = lastPillarPair.up.sprite.x;
 
-			// If the distance is less than the spawn threshold, spawn a new pillar
+			// Check if the bird has passed the pillar
+			if (birdX > pillarX - lastPillarPair.up.sprite.width / 2) {
+				// Increase the score
+				this.score.value++;
+
+				// Mark the pillar pair as passed
+				lastPillarPair.hasPassed = true;
+			}
+
+			// Spawn a new pillar if the distance from the last pillar is sufficient
+			const distanceFromEnd = window.innerWidth - lastPillarPair.up.sprite.x;
 			if (distanceFromEnd >= this.pillarSpawnDistance) {
 				this.spawnPillarPair();
 			}

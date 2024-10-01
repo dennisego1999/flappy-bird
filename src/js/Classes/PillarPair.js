@@ -4,6 +4,7 @@ export default class PillarPair {
 	constructor() {
 		this.up = null;
 		this.down = null;
+		this.hasPassed = false;
 
 		// Generate pair
 		this.generatePillarPair();

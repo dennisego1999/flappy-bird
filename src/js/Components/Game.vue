@@ -27,7 +27,11 @@ onBeforeUnmount(() => {
 				v-if="Game.isGameOver.value"
 				class="absolute inset-0 z-10 flex h-full w-full items-center justify-center bg-black/[0.5]"
 			>
-				<span class="text-extrabold rounded-lg bg-white p-2">Game over</span>
+				<span class="rounded-lg bg-white p-2 font-extrabold">Game over</span>
+			</div>
+
+			<div v-else class="absolute right-2 top-2 z-50 rounded-lg bg-white p-2">
+				<span class="font-extrabold text-black">Score: {{ Game.score.value }}</span>
 			</div>
 		</Transition>
 
