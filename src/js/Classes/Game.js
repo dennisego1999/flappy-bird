@@ -15,7 +15,8 @@ class Game extends PixiManager {
 		this.pillarPairs = [];
 		this.oldCanvasWidth = window.innerWidth;
 		this.pillarTexture = null;
-		this.pillarSpawnDistance = 300;
+		this.pillarSpawnDistance = null;
+		this.pillarBaseDistance = 300;
 		this.gameSpeed = 1;
 		this.difficultyMultiplier = 1;
 		this.bird = null;
@@ -138,16 +139,25 @@ class Game extends PixiManager {
 			// Dynamically adjust pillar spawn distance and speed
 			this.adjustDifficulty();
 
+			// Check and spawn new pair when necessary
 			this.checkAndSpawnNewPillar();
-		} else {
-			// If there are no pillars, spawn the first one
-			this.spawnPillarPair();
+
+			return;
 		}
+
+		// If there are no pillars, spawn the first one
+		this.spawnPillarPair();
 	}
 
 	adjustDifficulty() {
 		// Increase the difficulty multiplier as the score increases
 		this.difficultyMultiplier = 1 + (this.score.value / 10) * 0.5;
+
+		// Calculate the spawn distance multiplier
+		const spawnDistanceMultiplier = Math.max(0.2, Math.min(1, 1 - (this.score.value / 10) * 0.5));
+
+		// Update spawn distance
+		this.pillarSpawnDistance = this.pillarBaseDistance * spawnDistanceMultiplier;
 	}
 
 	checkCollisions() {
@@ -191,27 +201,30 @@ class Game extends PixiManager {
 			return;
 		}
 
-		// Get the last pillar pair
-		const lastPillarPair = this.pillarPairs[this.pillarPairs.length - 1];
+		const birdX = this.bird.sprite.position.x;
 
-		if (lastPillarPair && lastPillarPair.up.sprite && !lastPillarPair.hasPassed) {
-			// Calculate the distance between the bird and the pillar pair
-			const birdX = this.bird.sprite.position.x;
-			const pillarX = lastPillarPair.up.sprite.x;
+		// Loop through all pillar pairs
+		this.pillarPairs.forEach((pillarPair) => {
+			if (pillarPair.up.sprite && !pillarPair.hasPassed) {
+				const pillarX = pillarPair.up.sprite.x;
 
-			// Check if the bird has passed the pillar
-			if (birdX > pillarX - lastPillarPair.up.sprite.width / 2) {
-				// Increase the score
-				this.score.value++;
+				// Check if the bird has passed the pillar
+				if (birdX >= pillarX - pillarPair.up.sprite.width / 2) {
+					// Increase the score
+					this.score.value++;
 
-				// Mark the pillar pair as passed
-				lastPillarPair.hasPassed = true;
+					// Mark the pillar pair as passed
+					pillarPair.hasPassed = true;
+
+					// Adjust difficulty dynamically after each pass
+					this.adjustDifficulty();
+				}
 			}
+		});
 
-			// Adjust difficulty dynamically after each pass
-			this.adjustDifficulty();
-
-			// Spawn a new pillar if the distance is sufficient
+		// Spawn a new pillar if the distance is sufficient from the last pillar pair
+		const lastPillarPair = this.pillarPairs[this.pillarPairs.length - 1];
+		if (lastPillarPair) {
 			const distanceFromEnd = window.innerWidth - lastPillarPair.up.sprite.x;
 			if (distanceFromEnd >= this.pillarSpawnDistance) {
 				this.spawnPillarPair();
