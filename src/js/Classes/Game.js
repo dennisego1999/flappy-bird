@@ -1,9 +1,9 @@
+import { ref } from 'vue';
 import { Assets, Sprite } from 'pixi.js';
 import PillarPair from '@js/Classes/PillarPair.js';
 import PixiManager from '@js/Classes/PixiManager.js';
 import Bird from '@js/Classes/Bird.js';
 import BirdControls from '@js/Classes/BirdControls.js';
-import { ref } from 'vue';
 
 class Game extends PixiManager {
 	constructor() {

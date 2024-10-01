@@ -1,4 +1,3 @@
-import { ref } from 'vue';
 import { AnimatedSprite, Assets } from 'pixi.js';
 import Game from '@js/Classes/Game.js';
 
