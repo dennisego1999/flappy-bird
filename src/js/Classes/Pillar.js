@@ -36,14 +36,14 @@ export default class Pillar {
 		Game.app.stage.addChild(this.sprite);
 	}
 
-	update(speedFactor) {
+	update() {
 		if (!this.sprite) {
 			// Early return
 			return;
 		}
 
 		// Update position
-		this.sprite.position.x -= speedFactor;
+		this.sprite.position.x -= Game.gameSpeed;
 
 		if (this.sprite.position.x <= -this.sprite.width) {
 			// Pillar has exceeded viewport boundary => destroy the sprite

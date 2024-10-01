@@ -16,9 +16,9 @@ export default class PillarPair {
 		this.down = new Pillar('down');
 	}
 
-	update(speedFactor) {
+	update() {
 		// Update
-		this.up.update(speedFactor);
-		this.down.update(speedFactor);
+		this.up.update();
+		this.down.update();
 	}
 }

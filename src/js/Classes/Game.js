@@ -17,7 +17,8 @@ class Game extends PixiManager {
 		this.pillarTexture = null;
 		this.pillarSpawnDistance = null;
 		this.pillarBaseDistance = 300;
-		this.gameSpeed = 1;
+		this.baseSpeed = 1;
+		this.gameSpeed = null;
 		this.difficultyMultiplier = 1;
 		this.bird = null;
 		this.birdControls = null;
@@ -126,8 +127,8 @@ class Game extends PixiManager {
 			// Update pillars
 			this.pillarPairs.forEach((pillarPair, index) => {
 				// Increase pillar movement speed based on difficulty
-				const pillarSpeed = this.gameSpeed * this.difficultyMultiplier;
-				pillarPair.update(pillarSpeed);
+				this.gameSpeed = this.baseSpeed * this.difficultyMultiplier;
+				pillarPair.update();
 
 				// Remove off-screen pillars
 				if (!pillarPair.up.sprite || !pillarPair.down.sprite) {
