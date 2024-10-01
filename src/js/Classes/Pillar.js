@@ -1,4 +1,5 @@
 import { Sprite } from 'pixi.js';
+import { getRandomInt } from '@js/Helpers/index.js';
 import Game from '@js/Classes/Game.js';
 
 export default class Pillar {
@@ -6,6 +7,7 @@ export default class Pillar {
 		// Set variables
 		this.sprite = null;
 		this.direction = direction;
+		this.yOffset = getRandomInt(0, this.direction === 'down' ? -150 : 150);
 
 		// Create pixi app
 		this.setupPillar();
@@ -22,6 +24,7 @@ export default class Pillar {
 
 		// Set initial x position
 		this.sprite.x = window.innerWidth + this.sprite.width;
+		this.sprite.y += this.yOffset;
 
 		// Set anchor to center
 		this.sprite.anchor.set(0.5, 0);
@@ -56,7 +59,7 @@ export default class Pillar {
 
 		if (this.direction === 'down') {
 			// The 'up' sprite is positioned at the top of the canvas, offset by its height
-			this.sprite.position.y = this.sprite.height;
+			this.sprite.position.y = this.sprite.height + this.yOffset;
 
 			return;
 		}
@@ -66,7 +69,7 @@ export default class Pillar {
 		const offsetHeight = base.height;
 
 		// The 'down' sprite is positioned just above the base
-		this.sprite.position.y = window.innerHeight - this.sprite.height - offsetHeight;
+		this.sprite.position.y = window.innerHeight - this.sprite.height - offsetHeight + this.yOffset;
 	}
 
 	destroy() {
