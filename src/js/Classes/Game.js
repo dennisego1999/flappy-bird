@@ -128,8 +128,6 @@ class Game extends PixiManager {
 				const pillarSpeed = this.gameSpeed * this.difficultyMultiplier;
 				pillarPair.update(pillarSpeed);
 
-				console.log(pillarSpeed);
-
 				// Remove off-screen pillars
 				if (!pillarPair.up.sprite || !pillarPair.down.sprite) {
 					// Clean up destroyed pillar pairs
