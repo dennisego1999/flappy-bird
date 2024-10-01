@@ -2,7 +2,7 @@ import { Assets, Sprite } from 'pixi.js';
 import PillarPair from '@js/Classes/PillarPair.js';
 import PixiManager from '@js/Classes/PixiManager.js';
 import Bird from '@js/Classes/Bird.js';
-import BirdControls from './BirdControls.js';
+import BirdControls from '@js/Classes/BirdControls.js';
 
 class Game extends PixiManager {
 	constructor() {
@@ -30,7 +30,15 @@ class Game extends PixiManager {
 				// Setup render
 				this.setupRender({
 					action: () => {
+						if (this.bird && this.bird.isHit) {
+							// Game over
+							return;
+						}
+
+						// Update pillars
 						this.updatePillars();
+
+						// Update bird
 						this.updateBird();
 					}
 				});

@@ -94,6 +94,10 @@ export default class Bird {
 
 			// Reset velocity if hitting the ground
 			this.velocity = 0;
+
+			if (!this.isHit) {
+				this.isHit = true;
+			}
 		}
 	}
 }
