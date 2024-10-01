@@ -3,6 +3,7 @@ import PillarPair from '@js/Classes/PillarPair.js';
 import PixiManager from '@js/Classes/PixiManager.js';
 import Bird from '@js/Classes/Bird.js';
 import BirdControls from '@js/Classes/BirdControls.js';
+import { ref } from 'vue';
 
 class Game extends PixiManager {
 	constructor() {
@@ -17,6 +18,7 @@ class Game extends PixiManager {
 		this.pillarSpawnDistance = 300;
 		this.bird = null;
 		this.birdControls = null;
+		this.isGameOver = ref(false);
 	}
 
 	init(canvasId) {
@@ -30,7 +32,7 @@ class Game extends PixiManager {
 				// Setup render
 				this.setupRender({
 					action: () => {
-						if (this.bird && this.bird.isHit) {
+						if (this.isGameOver.value) {
 							// Game over
 							return;
 						}

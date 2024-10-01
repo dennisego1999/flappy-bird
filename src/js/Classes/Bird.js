@@ -1,3 +1,4 @@
+import { ref } from 'vue';
 import { AnimatedSprite, Assets } from 'pixi.js';
 import Game from '@js/Classes/Game.js';
 
@@ -7,7 +8,6 @@ export default class Bird {
 		this.velocity = 0; // Bird's vertical velocity
 		this.gravity = 0.6; // Gravity force applied each frame
 		this.flapPower = -8; // Power applied when the bird flaps (negative because it moves upward)
-		this.isHit = false;
 
 		// Init
 		this.init();
@@ -44,7 +44,7 @@ export default class Bird {
 	}
 
 	flap() {
-		if (!this.isHit) {
+		if (!Game.isGameOver.value) {
 			// Apply flap power to the velocity
 			this.velocity = this.flapPower;
 		}
@@ -52,7 +52,7 @@ export default class Bird {
 
 	handleCollision() {
 		// Mark the bird as hit
-		this.isHit = true;
+		Game.isGameOver.value = true;
 	}
 
 	update() {
@@ -60,7 +60,7 @@ export default class Bird {
 			return;
 		}
 
-		if (!this.isHit) {
+		if (!Game.isGameOver.value) {
 			// Normal update logic when bird hasn't hit anything
 			this.velocity += this.gravity;
 			this.sprite.position.y += this.velocity;
@@ -95,8 +95,8 @@ export default class Bird {
 			// Reset velocity if hitting the ground
 			this.velocity = 0;
 
-			if (!this.isHit) {
-				this.isHit = true;
+			if (!Game.isGameOver.value) {
+				Game.isGameOver.value = true;
 			}
 		}
 	}
