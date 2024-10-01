@@ -11,7 +11,8 @@ class Game extends PixiManager {
 
 		// Set variables
 		this.background = null;
-		this.base = null;
+		this.baseDefault = null;
+		this.baseExtra = null;
 		this.pillarPairs = [];
 		this.oldCanvasWidth = window.innerWidth;
 		this.pillarTexture = null;
@@ -47,6 +48,9 @@ class Game extends PixiManager {
 
 						// Update pillars
 						this.updatePillars();
+
+						// Update infinite base
+						this.updateBase();
 					}
 				});
 
@@ -93,14 +97,29 @@ class Game extends PixiManager {
 	}
 
 	async setupBase() {
-		// Add base sprite
+		// Add base texture
 		const baseTexture = await Assets.load('/assets/sprites/base.webp');
-		this.base = Sprite.from(baseTexture);
-		this.base.zIndex = 50;
-		this.base.name = 'base-asset';
+
+		// Create two base sprites for the infinite scrolling effect
+		this.baseDefault = Sprite.from(baseTexture);
+		this.baseDefault.zIndex = 50;
+		this.baseDefault.name = 'base-asset-1';
+
+		this.baseExtra = Sprite.from(baseTexture);
+		this.baseExtra.zIndex = 50;
+		this.baseExtra.name = 'base-asset-2';
+
+		// Position the base sprites at the bottom of the canvas
+		this.baseDefault.y = window.innerHeight - this.baseDefault.height;
+		this.baseDefault.x = 0;
+
+		// Set initial position
+		this.baseExtra.y = window.innerHeight - this.baseExtra.height;
+		this.baseExtra.x = window.innerWidth;
 
 		// Add to stage container
-		this.app.stage.addChild(this.base);
+		this.app.stage.addChild(this.baseDefault);
+		this.app.stage.addChild(this.baseExtra);
 	}
 
 	setupBird() {
@@ -119,6 +138,24 @@ class Game extends PixiManager {
 
 			// Check for collisions with pillars
 			this.checkCollisions();
+		}
+	}
+
+	updateBase() {
+		// Move the base sprites left according to the speed
+		this.baseDefault.x -= this.gameSpeed;
+		this.baseExtra.x -= this.gameSpeed;
+
+		// If the first base sprite goes off-screen, reset its position
+		if (this.baseDefault.x + this.baseDefault.width < 0) {
+			// Position it next to the second base
+			this.baseDefault.x = this.baseExtra.x + this.baseExtra.width;
+		}
+
+		// If the second base sprite goes off-screen, reset its position
+		if (this.baseExtra.x + this.baseExtra.width < 0) {
+			// Position it next to the first base
+			this.baseExtra.x = this.baseDefault.x + this.baseDefault.width;
 		}
 	}
 
@@ -255,12 +292,14 @@ class Game extends PixiManager {
 		this.background.y = (window.innerHeight - this.background.height) / 2;
 
 		// Adjust the base size and position
-		this.base.width = window.innerWidth;
-		this.base.height = window.innerWidth / baseAspectRatio;
+		this.baseDefault.width = window.innerWidth;
+		this.baseDefault.height = window.innerWidth / baseAspectRatio;
+		this.baseExtra.width = window.innerWidth;
+		this.baseExtra.height = window.innerWidth / baseAspectRatio;
 
 		// Position the base at the bottom of the canvas
-		this.base.x = 0;
-		this.base.y = window.innerHeight - this.base.height;
+		this.baseDefault.y = window.innerHeight - this.baseDefault.height;
+		this.baseExtra.y = window.innerHeight - this.baseExtra.height;
 	}
 
 	resize() {

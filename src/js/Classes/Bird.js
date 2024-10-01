@@ -95,13 +95,13 @@ export default class Bird {
 		}
 
 		// If the bird hits the ground, stop movement
-		if (this.sprite.position.y > window.innerHeight - this.sprite.height - Game.base.height) {
+		if (this.sprite.position.y > window.innerHeight - this.sprite.height - Game.baseDefault.height) {
 			/*
 				Lowest point met => DEAD
 			 */
 
 			// Set min position
-			this.sprite.position.y = window.innerHeight - this.sprite.height - Game.base.height;
+			this.sprite.position.y = window.innerHeight - this.sprite.height - Game.baseDefault.height;
 
 			// Reset velocity if hitting the ground
 			this.velocity = 0;

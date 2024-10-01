@@ -62,8 +62,7 @@ export default class Pillar {
 		}
 
 		// Set offset height
-		const base = Game.app.stage.children.find((child) => child.name === 'base-asset');
-		const offsetHeight = base.height;
+		const offsetHeight = Game.baseDefault.height;
 
 		// The 'down' sprite is positioned just above the base
 		this.sprite.position.y = window.innerHeight - this.sprite.height - offsetHeight + this.yOffset;
