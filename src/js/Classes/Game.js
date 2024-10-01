@@ -160,31 +160,50 @@ class Game extends PixiManager {
 	}
 
 	updatePillars() {
-		if (this.pillarPairs.length !== 0) {
-			// Update pillars
-			this.pillarPairs.forEach((pillarPair, index) => {
-				// Increase pillar movement speed based on difficulty
-				this.gameSpeed = this.baseSpeed * this.difficultyMultiplier;
-				pillarPair.update();
-
-				// Remove off-screen pillars
-				if (!pillarPair.up.sprite || !pillarPair.down.sprite) {
-					// Clean up destroyed pillar pairs
-					this.pillarPairs.splice(index, 1);
-				}
-			});
-
-			// Dynamically adjust pillar spawn distance and speed
-			this.adjustDifficulty();
-
-			// Check and spawn new pair when necessary
-			this.checkAndSpawnNewPillar();
+		if (this.pillarPairs.length === 0) {
+			// If there are no pillars, spawn the first one
+			this.spawnPillarPair();
 
 			return;
 		}
 
-		// If there are no pillars, spawn the first one
-		this.spawnPillarPair();
+		this.pillarPairs.forEach((pillarPair, index) => {
+			// Increase pillar movement speed based on difficulty
+			this.gameSpeed = this.baseSpeed * this.difficultyMultiplier;
+			pillarPair.update();
+
+			// Remove off-screen pillars
+			if (!pillarPair.up.sprite || !pillarPair.down.sprite) {
+				// Clean up destroyed pillar pairs
+				this.pillarPairs.splice(index, 1);
+			}
+
+			if (pillarPair.up.sprite && !pillarPair.hasPassed) {
+				// Check if the bird has passed the pillar
+				if (this.bird.sprite.position.x >= pillarPair.up.sprite.x - pillarPair.up.sprite.width / 2) {
+					// Increase the score
+					this.score.value++;
+
+					// Mark the pillar pair as passed
+					pillarPair.hasPassed = true;
+
+					// Adjust difficulty dynamically after each pass
+					this.adjustDifficulty();
+				}
+			}
+		});
+
+		// Dynamically adjust pillar spawn distance and speed
+		this.adjustDifficulty();
+
+		// Spawn a new pillar if the distance is sufficient from the last pillar pair
+		const lastPillarPair = this.pillarPairs[this.pillarPairs.length - 1];
+		if (lastPillarPair) {
+			const distanceFromEnd = window.innerWidth - lastPillarPair.up.sprite.x;
+			if (distanceFromEnd >= this.pillarSpawnDistance) {
+				this.spawnPillarPair();
+			}
+		}
 	}
 
 	adjustDifficulty() {
@@ -232,42 +251,6 @@ class Game extends PixiManager {
 		// Add the pillar pair to the stage
 		this.app.stage.addChild(newPillarPair.up.sprite);
 		this.app.stage.addChild(newPillarPair.down.sprite);
-	}
-
-	checkAndSpawnNewPillar() {
-		if (!this.bird.sprite) {
-			return;
-		}
-
-		const birdX = this.bird.sprite.position.x;
-
-		// Loop through all pillar pairs
-		this.pillarPairs.forEach((pillarPair) => {
-			if (pillarPair.up.sprite && !pillarPair.hasPassed) {
-				const pillarX = pillarPair.up.sprite.x;
-
-				// Check if the bird has passed the pillar
-				if (birdX >= pillarX - pillarPair.up.sprite.width / 2) {
-					// Increase the score
-					this.score.value++;
-
-					// Mark the pillar pair as passed
-					pillarPair.hasPassed = true;
-
-					// Adjust difficulty dynamically after each pass
-					this.adjustDifficulty();
-				}
-			}
-		});
-
-		// Spawn a new pillar if the distance is sufficient from the last pillar pair
-		const lastPillarPair = this.pillarPairs[this.pillarPairs.length - 1];
-		if (lastPillarPair) {
-			const distanceFromEnd = window.innerWidth - lastPillarPair.up.sprite.x;
-			if (distanceFromEnd >= this.pillarSpawnDistance) {
-				this.spawnPillarPair();
-			}
-		}
 	}
 
 	updateUiDimensions() {
