@@ -43,6 +43,9 @@ class Game extends PixiManager {
 					}
 				});
 
+				// Setup stats
+				this.setupStats();
+
 				// Start rendering
 				this.startRendering();
 			});

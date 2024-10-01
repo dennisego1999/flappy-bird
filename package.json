@@ -11,6 +11,7 @@
   "dependencies": {
     "pixi.js": "^8.4.1",
     "sass": "^1.79.3",
+    "stats.js": "^0.17.0",
     "vue": "^3.4.37",
     "vue-router": "4"
   },

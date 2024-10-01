@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import Stats from 'stats.js/src/Stats.js';
 
 export default class Game {
 	constructor() {
@@ -10,6 +11,7 @@ export default class Game {
 		this.fps = 1000 / 60;
 		this.then = null;
 		this.renderAction = null;
+		this.stats = new Stats();
 	}
 
 	async createPixiApp(canvasId) {
@@ -35,6 +37,14 @@ export default class Game {
 
 		// Make sure stage is interactive
 		this.app.stage.interactive = true;
+	}
+
+	setupStats() {
+		// Panel settings => show fps
+		this.stats.showPanel(0);
+
+		// Add to body
+		document.body.appendChild(this.stats.dom);
 	}
 
 	destroy() {
@@ -76,12 +86,18 @@ export default class Game {
 		const now = Date.now();
 		const delta = now - this.then;
 
+		// Stats begin
+		this.stats.begin();
+
 		if (delta > this.fps) {
 			this.then = now - (delta % this.fps);
 
 			// Render
 			this.render(time);
 		}
+
+		// Stats end
+		this.stats.end();
 
 		// Request the animation frame
 		this.animateFrameId = requestAnimationFrame(this.animate.bind(this));
