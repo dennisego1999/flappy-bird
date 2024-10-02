@@ -1,13 +1,13 @@
-import * as PIXI from 'pixi.js';
+import { Application, Ticker, WebGLRenderer } from 'pixi.js';
 import Stats from 'stats.js/src/Stats.js';
 
 export default class Game {
 	constructor() {
 		this.canvas = null;
 		this.app = null;
-		this.ticker = PIXI.Ticker.shared;
+		this.ticker = Ticker.shared;
 		this.animateFrameId = null;
-		this.renderer = new PIXI.WebGLRenderer();
+		this.renderer = new WebGLRenderer();
 		this.fps = 1000 / 60;
 		this.then = null;
 		this.renderAction = null;
@@ -19,7 +19,7 @@ export default class Game {
 		this.canvas = document.getElementById(canvasId);
 
 		// Create pixi app
-		this.app = new PIXI.Application();
+		this.app = new Application();
 
 		// Init the application
 		await this.app.init({
