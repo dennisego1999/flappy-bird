@@ -76,8 +76,6 @@ export default class Game {
 		// Render the app
 		this.ticker.update();
 
-		console.log(delta);
-
 		// Render render action
 		if (this.renderAction) {
 			this.renderAction(delta);
