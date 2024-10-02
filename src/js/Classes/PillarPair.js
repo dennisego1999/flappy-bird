@@ -33,7 +33,7 @@ export default class PillarPair {
 		this.down = new Pillar('down');
 	}
 
-	update() {
+	update(delta) {
 		if (this.up.sprite && !this.hasPassed) {
 			// Check if the bird has passed the pillar
 			if (Game.bird && Game.bird.sprite && Game.bird.sprite.position.x >= this.up.sprite.x - this.up.sprite.width / 2) {
@@ -46,7 +46,7 @@ export default class PillarPair {
 		}
 
 		// Update
-		this.up.update();
-		this.down.update();
+		this.up.update(delta);
+		this.down.update(delta);
 	}
 }

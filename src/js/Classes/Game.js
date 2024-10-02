@@ -18,7 +18,7 @@ class Game extends PixiManager {
 		this.pillarTexture = null;
 		this.pillarSpawnDistance = null;
 		this.pillarBaseDistance = 300;
-		this.baseSpeed = 2;
+		this.baseSpeed = 100;
 		this.gameSpeed = null;
 		this.difficultyMultiplier = 1;
 		this.bird = null;
@@ -38,7 +38,7 @@ class Game extends PixiManager {
 
 				// Setup render
 				this.setupRender({
-					action: () => {
+					action: (delta) => {
 						// Update bird
 						this.updateBird();
 
@@ -48,10 +48,10 @@ class Game extends PixiManager {
 						}
 
 						// Update pillars
-						this.updatePillars();
+						this.updatePillars(delta);
 
 						// Update infinite base
-						this.updateBase();
+						this.updateBase(delta);
 					}
 				});
 
@@ -145,10 +145,10 @@ class Game extends PixiManager {
 		}
 	}
 
-	updateBase() {
+	updateBase(delta) {
 		// Move the base sprites left according to the speed
-		this.baseDefault.x -= this.gameSpeed;
-		this.baseExtra.x -= this.gameSpeed;
+		this.baseDefault.x -= this.gameSpeed * delta;
+		this.baseExtra.x -= this.gameSpeed * delta;
 
 		// If the first base sprite goes off-screen, reset its position
 		if (this.baseDefault.x + this.baseDefault.width < 0) {
@@ -163,7 +163,7 @@ class Game extends PixiManager {
 		}
 	}
 
-	updatePillars() {
+	updatePillars(delta) {
 		if (this.pillarPairs.length === 0) {
 			// If there are no pillars, spawn the first one
 			this.spawnPillarPair();
@@ -177,7 +177,7 @@ class Game extends PixiManager {
 		// Update pillar pairs
 		for (let [index, pillarPair] of this.pillarPairs.entries()) {
 			// Update pillar pair
-			pillarPair.update();
+			pillarPair.update(delta);
 
 			if (pillarPair.active && pillarPair.up.sprite.position.x <= -pillarPair.up.sprite.width) {
 				// Pillar has exceeded viewport boundary => Return to pool

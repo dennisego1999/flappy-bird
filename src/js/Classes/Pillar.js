@@ -36,14 +36,14 @@ export default class Pillar {
 		Game.app.stage.addChild(this.sprite);
 	}
 
-	update() {
+	update(delta) {
 		if (!this.sprite) {
 			// Early return
 			return;
 		}
 
-		// Update position
-		this.sprite.position.x -= Game.gameSpeed;
+		// Update position using delta time for consistent speed
+		this.sprite.position.x -= Game.gameSpeed * delta;
 
 		if (this.direction === 'down') {
 			// The 'up' sprite is positioned at the top of the canvas, offset by its height

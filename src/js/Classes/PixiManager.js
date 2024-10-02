@@ -72,17 +72,19 @@ export default class Game {
 		this.ticker.stop();
 	}
 
-	render(time) {
+	render(delta) {
 		// Render the app
-		this.ticker.update(time);
+		this.ticker.update();
+
+		console.log(delta);
 
 		// Render render action
 		if (this.renderAction) {
-			this.renderAction();
+			this.renderAction(delta);
 		}
 	}
 
-	animate(time) {
+	animate() {
 		const now = Date.now();
 		const delta = now - this.then;
 
@@ -93,7 +95,7 @@ export default class Game {
 			this.stats.begin();
 
 			// Render
-			this.render(time);
+			this.render(delta / 1000);
 
 			// Stats end
 			this.stats.end();
