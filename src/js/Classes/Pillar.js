@@ -36,15 +36,7 @@ export default class Pillar {
 		Game.app.stage.addChild(this.sprite);
 	}
 
-	update(delta) {
-		if (!this.sprite) {
-			// Early return
-			return;
-		}
-
-		// Update position using delta time for consistent speed
-		this.sprite.position.x -= Game.gameSpeed * delta;
-
+	setVerticalPosition() {
 		if (this.direction === 'down') {
 			// The 'up' sprite is positioned at the top of the canvas, offset by its height
 			this.sprite.position.y = this.sprite.height + this.yOffset;
@@ -57,6 +49,19 @@ export default class Pillar {
 
 		// The 'down' sprite is positioned just above the base
 		this.sprite.position.y = window.innerHeight - this.sprite.height - offsetHeight + this.yOffset;
+	}
+
+	update(delta) {
+		if (!this.sprite) {
+			// Early return
+			return;
+		}
+
+		// Update position using delta time for consistent speed
+		this.sprite.position.x -= Game.gameSpeed * delta;
+
+		// Set vertical position
+		this.setVerticalPosition();
 	}
 
 	reset() {

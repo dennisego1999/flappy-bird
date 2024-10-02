@@ -253,6 +253,12 @@ class Game extends PixiManager {
 	}
 
 	updateUiDimensions() {
+		// Capture the new width of the canvas
+		const newCanvasWidth = window.innerWidth;
+
+		// Calculate the ratio between old and new width
+		const widthRatio = newCanvasWidth / this.oldCanvasWidth;
+
 		// Get aspect ratios
 		const backgroundAspectRatio = 288 / 512;
 		const baseAspectRatio = 336 / 112;
@@ -280,37 +286,31 @@ class Game extends PixiManager {
 		this.baseExtra.height = window.innerWidth / baseAspectRatio;
 
 		// Position the base at the bottom of the canvas
+		this.baseDefault.x = 0;
+		this.baseExtra.x = window.innerWidth;
 		this.baseDefault.y = window.innerHeight - this.baseDefault.height;
 		this.baseExtra.y = window.innerHeight - this.baseExtra.height;
+
+		// Update the pillars' x positions based on the width ratio
+		this.pillarPairs.forEach((pillarPair) => {
+			// Scale x position by the width ratio
+			pillarPair.up.sprite.position.x *= widthRatio;
+			pillarPair.down.sprite.position.x *= widthRatio;
+
+			pillarPair.up.setVerticalPosition();
+			pillarPair.down.setVerticalPosition();
+		});
+
+		// Update the old canvas width for future resizes
+		this.oldCanvasWidth = newCanvasWidth;
 	}
 
 	resize() {
-		// Capture the new width of the canvas
-		const newCanvasWidth = window.innerWidth;
-
-		// Calculate the ratio between old and new width
-		const widthRatio = newCanvasWidth / this.oldCanvasWidth;
-
 		// Resize the app
 		this.app.resize();
 
 		// Update background size
 		this.updateUiDimensions();
-
-		// Update the pillars' x positions based on the width ratio
-		this.pillarPairs.forEach((pillarPair) => {
-			if (!pillarPair.up.sprite || !pillarPair.down.sprite) {
-				// Early return
-				return;
-			}
-
-			// Scale x position by the width ratio
-			pillarPair.up.sprite.position.x *= widthRatio;
-			pillarPair.down.sprite.position.x *= widthRatio;
-		});
-
-		// Update the old canvas width for future resizes
-		this.oldCanvasWidth = newCanvasWidth;
 	}
 
 	destroy() {
