@@ -1,9 +1,9 @@
 import { ref } from 'vue';
-import { Assets, Pool, Sprite } from 'pixi.js';
-import PillarPair from '@js/Classes/PillarPair.js';
+import { Assets, Sprite } from 'pixi.js';
 import PixiManager from '@js/Classes/PixiManager.js';
 import Bird from '@js/Classes/Bird.js';
 import BirdControls from '@js/Classes/BirdControls.js';
+import PillarPairPool from '@js/Classes/PillarPairPool.js';
 
 class Game extends PixiManager {
 	constructor() {
@@ -25,7 +25,7 @@ class Game extends PixiManager {
 		this.birdControls = null;
 		this.score = ref(0);
 		this.isGameOver = ref(false);
-		this.pillarPool = null;
+		this.pillarPairPool = null;
 	}
 
 	init(canvasId) {
@@ -81,7 +81,7 @@ class Game extends PixiManager {
 		this.updateUiDimensions();
 
 		// Create pillar pool
-		this.pillarPool = new Pool(PillarPair);
+		this.pillarPairPool = new PillarPairPool();
 	}
 
 	async setupPillarTexture() {
@@ -181,7 +181,7 @@ class Game extends PixiManager {
 
 			if (pillarPair.active && pillarPair.up.sprite.position.x <= -pillarPair.up.sprite.width) {
 				// Pillar has exceeded viewport boundary => Return to pool
-				this.pillarPool.return(pillarPair);
+				this.pillarPairPool.return(pillarPair);
 
 				// Remove the pillar pair to the stage
 				this.app.stage.removeChild(pillarPair.up.sprite);
@@ -244,7 +244,7 @@ class Game extends PixiManager {
 
 	spawnPillarPair() {
 		// Get a pair from pool
-		const newPillarPair = this.pillarPool.get();
+		const newPillarPair = this.pillarPairPool.get();
 		this.pillarPairs.push(newPillarPair);
 
 		// Add the pillar pair to the stage
