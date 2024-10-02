@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { Assets, Sprite } from 'pixi.js';
+import { Assets, Pool, Sprite } from 'pixi.js';
 import PillarPair from '@js/Classes/PillarPair.js';
 import PixiManager from '@js/Classes/PixiManager.js';
 import Bird from '@js/Classes/Bird.js';
@@ -25,6 +25,7 @@ class Game extends PixiManager {
 		this.birdControls = null;
 		this.score = ref(0);
 		this.isGameOver = ref(false);
+		this.pillarPool = null;
 	}
 
 	init(canvasId) {
@@ -78,6 +79,9 @@ class Game extends PixiManager {
 
 		// Update ui dimensions
 		this.updateUiDimensions();
+
+		// Create pillar pool
+		this.pillarPool = new Pool(PillarPair);
 	}
 
 	async setupPillarTexture() {
@@ -167,28 +171,26 @@ class Game extends PixiManager {
 			return;
 		}
 
-		this.pillarPairs.forEach((pillarPair, index) => {
-			// Increase pillar movement speed based on difficulty
-			this.gameSpeed = this.baseSpeed * this.difficultyMultiplier;
+		// Set game speed according to score
+		this.gameSpeed = this.baseSpeed * this.difficultyMultiplier;
+
+		// Update pillar pairs
+		for (let [index, pillarPair] of this.pillarPairs.entries()) {
+			// Update pillar pair
 			pillarPair.update();
 
-			// Remove off-screen pillars
-			if (!pillarPair.up.sprite || !pillarPair.down.sprite) {
-				// Clean up destroyed pillar pairs
+			if (pillarPair.active && pillarPair.up.sprite.position.x <= -pillarPair.up.sprite.width) {
+				// Pillar has exceeded viewport boundary => Return to pool
+				this.pillarPool.return(pillarPair);
+
+				// Remove the pillar pair to the stage
+				this.app.stage.removeChild(pillarPair.up.sprite);
+				this.app.stage.removeChild(pillarPair.down.sprite);
+
+				// Clean up destroyed pillar pairs when pair has exceeded viewport
 				this.pillarPairs.splice(index, 1);
 			}
-
-			if (pillarPair.up.sprite && !pillarPair.hasPassed) {
-				// Check if the bird has passed the pillar
-				if (this.bird.sprite.position.x >= pillarPair.up.sprite.x - pillarPair.up.sprite.width / 2) {
-					// Increase the score
-					this.score.value++;
-
-					// Mark the pillar pair as passed
-					pillarPair.hasPassed = true;
-				}
-			}
-		});
+		}
 
 		// Adjust difficulty
 		this.adjustDifficulty();
@@ -241,8 +243,8 @@ class Game extends PixiManager {
 	}
 
 	spawnPillarPair() {
-		// Create a new pillar pair and add it to the list
-		const newPillarPair = new PillarPair();
+		// Get a pair from pool
+		const newPillarPair = this.pillarPool.get();
 		this.pillarPairs.push(newPillarPair);
 
 		// Add the pillar pair to the stage

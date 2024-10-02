@@ -22,7 +22,7 @@ export default class Pillar {
 		// Set width
 		this.sprite.width = 80;
 
-		// Set initial x position
+		// Set initial x, y position
 		this.sprite.x = window.innerWidth + this.sprite.width;
 		this.sprite.y += this.yOffset;
 
@@ -45,15 +45,6 @@ export default class Pillar {
 		// Update position
 		this.sprite.position.x -= Game.gameSpeed;
 
-		if (this.sprite.position.x <= -this.sprite.width) {
-			// Pillar has exceeded viewport boundary => destroy the sprite
-			Game.app.stage.removeChild(this.sprite);
-			this.sprite.destroy();
-			this.sprite = null;
-
-			return;
-		}
-
 		if (this.direction === 'down') {
 			// The 'up' sprite is positioned at the top of the canvas, offset by its height
 			this.sprite.position.y = this.sprite.height + this.yOffset;
@@ -66,6 +57,11 @@ export default class Pillar {
 
 		// The 'down' sprite is positioned just above the base
 		this.sprite.position.y = window.innerHeight - this.sprite.height - offsetHeight + this.yOffset;
+	}
+
+	reset() {
+		// Set initial x position
+		this.sprite.x = window.innerWidth + this.sprite.width;
 	}
 
 	destroy() {
