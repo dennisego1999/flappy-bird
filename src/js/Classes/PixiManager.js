@@ -86,18 +86,18 @@ export default class Game {
 		const now = Date.now();
 		const delta = now - this.then;
 
-		// Stats begin
-		this.stats.begin();
-
 		if (delta > this.fps) {
 			this.then = now - (delta % this.fps);
 
+			// Stats begin
+			this.stats.begin();
+
 			// Render
 			this.render(time);
-		}
 
-		// Stats end
-		this.stats.end();
+			// Stats end
+			this.stats.end();
+		}
 
 		// Request the animation frame
 		this.animateFrameId = requestAnimationFrame(this.animate.bind(this));
