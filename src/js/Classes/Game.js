@@ -266,8 +266,6 @@ class Game extends PixiManager {
 		// Calculate the ratio between old and new width
 		const widthRatio = newCanvasWidth / this.oldCanvasWidth;
 
-		console.log(widthRatio);
-
 		// Get aspect ratios
 		const backgroundAspectRatio = 288 / 512;
 		const baseAspectRatio = 336 / 112;
