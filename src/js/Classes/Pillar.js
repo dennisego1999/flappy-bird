@@ -23,7 +23,7 @@ export default class Pillar {
 		this.sprite.width = 80;
 
 		// Set initial x, y position
-		this.sprite.x = window.innerWidth + this.sprite.width;
+		this.sprite.x = Game.canvasDimensions.width + this.sprite.width;
 		this.sprite.y += this.yOffset;
 
 		// Set anchor to center
@@ -48,7 +48,7 @@ export default class Pillar {
 		const offsetHeight = Game.baseDefault.height;
 
 		// The 'down' sprite is positioned just above the base
-		this.sprite.position.y = window.innerHeight - this.sprite.height - offsetHeight + this.yOffset;
+		this.sprite.position.y = Game.canvasDimensions.height - this.sprite.height - offsetHeight + this.yOffset;
 	}
 
 	update(delta) {
@@ -66,7 +66,7 @@ export default class Pillar {
 
 	reset() {
 		// Set initial x position
-		this.sprite.x = window.innerWidth + this.sprite.width;
+		this.sprite.x = Game.canvasDimensions.width + this.sprite.width;
 	}
 
 	destroy() {

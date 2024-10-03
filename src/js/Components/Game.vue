@@ -21,7 +21,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<div class="relative h-[100dvh] w-screen">
+	<div class="relative flex h-[100dvh] w-screen items-center justify-center bg-green-400">
 		<Transition name="fade" mode="out-in">
 			<div
 				v-if="Game.isGameOver.value"
@@ -38,6 +38,8 @@ onBeforeUnmount(() => {
 			</div>
 		</Transition>
 
-		<canvas id="game-canvas" class="h-full w-full" />
+		<div class="relative aspect-[390/844] w-full overflow-hidden rounded-lg shadow-2xl sm:w-[390px]">
+			<canvas id="game-canvas" class="h-full w-full" />
+		</div>
 	</div>
 </template>

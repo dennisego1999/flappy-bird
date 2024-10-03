@@ -35,8 +35,8 @@ export default class Bird {
 		this.sprite.zIndex = 9999;
 
 		// Set initial position
-		this.sprite.position.y = window.innerHeight / 2;
-		this.sprite.position.x = window.innerWidth * 0.25;
+		this.sprite.position.y = Game.canvasDimensions.height / 2;
+		this.sprite.position.x = Game.canvasDimensions.width * 0.25;
 
 		// Play the animation
 		this.sprite.play();
@@ -86,13 +86,13 @@ export default class Bird {
 		}
 
 		// If the bird hits the ground, stop movement
-		if (this.sprite.position.y > window.innerHeight - this.sprite.height - Game.baseDefault.height) {
+		if (this.sprite.position.y > Game.canvasDimensions.height - this.sprite.height - Game.baseDefault.height) {
 			/*
 				Lowest point met => DEAD
 			 */
 
 			// Set min position
-			this.sprite.position.y = window.innerHeight - this.sprite.height - Game.baseDefault.height;
+			this.sprite.position.y = Game.canvasDimensions.height - this.sprite.height - Game.baseDefault.height;
 
 			// Reset velocity if hitting the ground
 			this.velocity = 0;

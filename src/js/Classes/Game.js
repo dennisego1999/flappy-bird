@@ -14,7 +14,8 @@ class Game extends PixiManager {
 		this.baseDefault = null;
 		this.baseExtra = null;
 		this.pillarPairs = [];
-		this.oldCanvasWidth = window.innerWidth;
+		this.oldCanvasWidth = null;
+		this.canvasDimensions = null;
 		this.pillarTexture = null;
 		this.pillarSpawnDistance = null;
 		this.pillarBaseDistance = 300;
@@ -65,6 +66,12 @@ class Game extends PixiManager {
 	}
 
 	async setupScene() {
+		// Get canvas dimensions
+		this.canvasDimensions = this.app.canvas.getBoundingClientRect();
+
+		// Set old canvasWidth
+		this.oldCanvasWidth = this.canvasDimensions.width;
+
 		// Setup sprite texture
 		await this.setupPillarTexture();
 
@@ -114,12 +121,12 @@ class Game extends PixiManager {
 		this.baseExtra.name = 'base-asset-2';
 
 		// Position the base sprites at the bottom of the canvas
-		this.baseDefault.y = window.innerHeight - this.baseDefault.height;
+		this.baseDefault.y = this.canvasDimensions.height - this.baseDefault.height;
 		this.baseDefault.x = 0;
 
 		// Set initial position
-		this.baseExtra.y = window.innerHeight - this.baseExtra.height;
-		this.baseExtra.x = window.innerWidth;
+		this.baseExtra.y = this.canvasDimensions.height - this.baseExtra.height;
+		this.baseExtra.x = this.canvasDimensions.width;
 
 		// Add to stage container
 		this.app.stage.addChild(this.baseDefault);
@@ -198,7 +205,7 @@ class Game extends PixiManager {
 		// Spawn a new pillar if the distance is sufficient from the last pillar pair
 		const lastPillarPair = this.pillarPairs[this.pillarPairs.length - 1];
 		if (lastPillarPair) {
-			const distanceFromEnd = window.innerWidth - lastPillarPair.up.sprite.x;
+			const distanceFromEnd = this.canvasDimensions.width - lastPillarPair.up.sprite.x;
 			if (distanceFromEnd >= this.pillarSpawnDistance) {
 				this.spawnPillarPair();
 			}
@@ -254,42 +261,44 @@ class Game extends PixiManager {
 
 	updateUiDimensions() {
 		// Capture the new width of the canvas
-		const newCanvasWidth = window.innerWidth;
+		const newCanvasWidth = this.canvasDimensions.width;
 
 		// Calculate the ratio between old and new width
 		const widthRatio = newCanvasWidth / this.oldCanvasWidth;
 
+		console.log(widthRatio);
+
 		// Get aspect ratios
 		const backgroundAspectRatio = 288 / 512;
 		const baseAspectRatio = 336 / 112;
-		const canvasAspectRatio = window.innerWidth / window.innerHeight;
+		const canvasAspectRatio = this.canvasDimensions.width / this.canvasDimensions.height;
 
 		// Adjust the background size and position
 		if (canvasAspectRatio >= backgroundAspectRatio) {
 			// Fit to window width
-			this.background.width = window.innerWidth;
-			this.background.height = window.innerWidth / backgroundAspectRatio;
+			this.background.width = this.canvasDimensions.width;
+			this.background.height = this.canvasDimensions.width / backgroundAspectRatio;
 		} else {
 			// Fit to window height
-			this.background.height = window.innerHeight;
-			this.background.width = window.innerHeight * backgroundAspectRatio;
+			this.background.height = this.canvasDimensions.height;
+			this.background.width = this.canvasDimensions.height * backgroundAspectRatio;
 		}
 
 		// Center the background
-		this.background.x = (window.innerWidth - this.background.width) / 2;
-		this.background.y = (window.innerHeight - this.background.height) / 2;
+		this.background.x = (this.canvasDimensions.width - this.background.width) / 2;
+		this.background.y = (this.canvasDimensions.height - this.background.height) / 2;
 
 		// Adjust the base size and position
-		this.baseDefault.width = window.innerWidth;
-		this.baseDefault.height = window.innerWidth / baseAspectRatio;
-		this.baseExtra.width = window.innerWidth;
-		this.baseExtra.height = window.innerWidth / baseAspectRatio;
+		this.baseDefault.width = this.canvasDimensions.width;
+		this.baseDefault.height = this.canvasDimensions.width / baseAspectRatio;
+		this.baseExtra.width = this.canvasDimensions.width;
+		this.baseExtra.height = this.canvasDimensions.width / baseAspectRatio;
 
 		// Position the base at the bottom of the canvas
 		this.baseDefault.x = 0;
-		this.baseExtra.x = window.innerWidth;
-		this.baseDefault.y = window.innerHeight - this.baseDefault.height;
-		this.baseExtra.y = window.innerHeight - this.baseExtra.height;
+		this.baseExtra.x = this.canvasDimensions.width;
+		this.baseDefault.y = this.canvasDimensions.height - this.baseDefault.height;
+		this.baseExtra.y = this.canvasDimensions.height - this.baseExtra.height;
 
 		// Update the pillars' x positions based on the width ratio
 		this.pillarPairs.forEach((pillarPair) => {
@@ -306,6 +315,9 @@ class Game extends PixiManager {
 	}
 
 	resize() {
+		// Get canvas dimensions
+		this.canvasDimensions = this.app.canvas.getBoundingClientRect();
+
 		// Resize the app
 		this.app.resize();
 
