@@ -38,7 +38,7 @@ export default class Bird {
 		this.sprite.position.y = window.innerHeight / 2;
 		this.sprite.position.x = window.innerWidth * 0.25;
 
-		// Play the animation on a loop
+		// Play the animation
 		this.sprite.play();
 
 		// Add to container
@@ -62,21 +62,12 @@ export default class Bird {
 			return;
 		}
 
-		if (!Game.isGameOver.value) {
-			// Normal update logic when bird hasn't hit anything
-			this.velocity += this.gravity;
-			this.sprite.position.y += this.velocity;
+		// Update bird y position by setting velocity based on game state. If bird hit a pillar then it will fall quickly.
+		this.velocity += !Game.isGameOver.value ? this.gravity : this.gravity * 1.5;
+		this.sprite.position.y += this.velocity;
 
-			// Set target rotation
-			this.targetRotation = Math.min(Math.max(this.velocity * 0.1, -Math.PI / 4), Math.PI / 4);
-		} else {
-			// After a hit, make the bird fall to the ground
-			this.velocity += this.gravity * 1.5;
-			this.sprite.position.y += this.velocity;
-
-			// Set target rotation
-			this.targetRotation = Math.min(Math.max(this.velocity * 0.1, -Math.PI / 4), Math.PI / 4);
-		}
+		// Set target rotation
+		this.targetRotation = Math.min(Math.max(this.velocity * 0.1, -Math.PI / 4), Math.PI / 4);
 
 		// Prevent the bird from moving off the screen (top bound)
 		if (this.sprite.position.y < 0) {
