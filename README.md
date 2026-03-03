@@ -1,5 +1,29 @@
-# Vue 3 + Vite
+# Flappy Bird
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+A remake of the classic Flappy Bird game.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## Requirements
+
+Ensure you are using the correct Node.js version by running the following command in the root of the repository:
+```sh
+nvm use
+```
+
+## Development
+
+Install dependencies:
+```sh
+yarn
+```
+
+Start the development server with HMR:
+```sh
+yarn dev
+```
+
+## Production
+
+Build the project for production:
+```sh
+yarn build
+```
